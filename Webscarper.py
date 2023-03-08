@@ -43,6 +43,7 @@ soup1 = BeautifulSoup(src, 'lxml')
 
 
 
+
 with open('D:\python\index.html', 'r') as f:
     contents = f.read()
 with open('D:\python\job.csv', 'w', newline='') as csvfile:
@@ -51,14 +52,17 @@ with open('D:\python\job.csv', 'w', newline='') as csvfile:
         name = soup1.find('h1', {'class': 'text-heading-xlarge inline t-24 v-align-middle break-words'})
         tiltedesc= soup1.find('div',{'class':'text-body-medium break-words'})
         location = soup1.find('span', {'class': 'text-body-small inline t-black--light break-words'})
-        about= soup1.find('div',{'class':'inline-show-more-text inline-show-more-text--is-collapsed full-width'}).find('span',{'aria-hidden':'true'})
         writer.writerow(["Subject Name: " + name.text.strip()])
         writer.writerow(["Title Description: " + tiltedesc.text.strip()])
         writer.writerow(["Location: " + location.text.strip()])
-        about= soup1.find('div',{'class':'inline-show-more-text inline-show-more-text--is-collapsed full-width'}).find('span',{'aria-hidden':'true'})
+    except Exception as e:
+        writer.writerow(["Not available"])
+    try:
+        about= soup1.find('div',{'class':'pv-shared-text-with-see-more full-width t-14 t-normal t-black display-flex align-items-center'}).find('span',{'aria-hidden':'true'})
         writer.writerow(["About: " + about.text.strip()])
     except Exception as e:
         writer.writerow(["Not available"])
+
 
     writer.writerow([])
     e = soup1.find("div", {"id": "experience"}).find_next('div',{'class':'pvs-list__outer-container'}).find('ul')
@@ -135,28 +139,30 @@ with open('D:\python\job.csv', 'w', newline='') as csvfile:
         
     writer.writerow([])
     writer.writerow(["Projects"])
-    project_container = soup1.find("div", {"id": "projects"}).find_next('div',{'class':'pvs-list__outer-container'})
-    if project_container and project_container.find('ul'):
-        projects = project_container.find('ul')
-        entries = projects.find_all('li')    
-        for entry in entries:
-            try:
-                entity = entry.find('div',{'class':'pvs-entity pvs-entity--padded pvs-list__item--no-padding-in-columns'})
-                spans = entity.find_all('span',{'aria-hidden':'true'})
-                name = spans[0].text.strip() if spans[0] else None
-                dates = spans[1].text.strip() if spans[1] else None
-                association = spans[2].text.strip() if spans[2] else None
-                about = spans[3].text.strip() if spans[3] else None
+    try:
+        project_container = soup1.find("div", {"id": "projects"}).find_next('div',{'class':'pvs-list__outer-container'})
+        if project_container and project_container.find('ul'):
+            projects = project_container.find('ul')
+            entries = projects.find_all('li')    
+            for entry in entries:
+                try:
+                    entity = entry.find('div',{'class':'pvs-entity pvs-entity--padded pvs-list__item--no-padding-in-columns'})
+                    spans = entity.find_all('span',{'aria-hidden':'true'})
+                    name = spans[0].text.strip() if spans[0] else None
+                    dates = spans[1].text.strip() if spans[1] else None
+                    association = spans[2].text.strip() if spans[2] else None
+                    about = spans[3].text.strip() if spans[3] else None
 
-                writer.writerow(["Project Name: "+ name])
-                writer.writerow(["Dates: "+ dates])
-                writer.writerow(["Association: "+ association])
-                writer.writerow(["About: "+ about])
-                writer.writerow([])
-            except AttributeError:
-                continue
-            except IndexError:
-                continue
-            
+                    writer.writerow(["Project Name: "+ name])
+                    writer.writerow(["Dates: "+ dates])
+                    writer.writerow(["Association: "+ association])
+                    writer.writerow(["About: "+ about])
+                    writer.writerow([])
+                except AttributeError:
+                    continue
+                except IndexError:
+                    continue
+    except AttributeError:
+        print("No projects section found")
 driver.quit()
 
