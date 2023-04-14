@@ -7,6 +7,8 @@ import csv
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
 
 email1=''
 password1=''
@@ -16,20 +18,20 @@ with open('D:\python\input.txt', 'r', encoding='utf-8') as input_file:
         line = line.strip()
         email1, password1 = line.split(':')
 
-driver = webdriver.Chrome('C:\Drivers\driver\chromedriver.exe')
+driver = webdriver.Chrome('C:\\Users\\sujay\\OneDrive\\Pictures\\chromedriver_win32\\chromedriver.exe')
 
 driver.get('https://www.linkedin.com/')
 
 
-email = driver.find_element(by='name', value='session_key')
+email = driver.find_element(By.NAME, 'session_key')
 email.send_keys(email1)
-password = driver.find_element(by='name', value='session_password')
+password = driver.find_element(By.NAME, 'session_password')
 password.send_keys(password1)
 password.submit()
 
 time.sleep(5)
 
-driver.get('https://www.linkedin.com/in/sujay-malghan-74404a106/')
+driver.get('https://www.linkedin.com/in/jackmckay/')
 
 for i in range(1, 3):
     driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
@@ -38,11 +40,6 @@ for i in range(1, 3):
 
 src = driver.page_source
 soup1 = BeautifulSoup(src, 'lxml')
-
-
-
-
-
 
 with open('D:\python\index.html', 'r') as f:
     contents = f.read()
